@@ -1,11 +1,7 @@
-import axios from "axios";
-import cheerio from "cheerio";
-import mongoose from "mongoose";
-import House from "./src/db/model/House.js";
+import * as cheerio from "cheerio";
+import House from "../../db/model/House.js";
 
-const id: string = "681426253";
-
-const createDB = async (html: string, id: string) => {
+export const createDatabase = async (html: string, id: string) => {
   const $ = cheerio.load(html);
   const price: number = parseInt($(".offer__price").text().trim().replace(/\D/g, ""));
   const city: string = $(".offer__location.offer__advert-short-info span").text().trim();
@@ -17,7 +13,7 @@ const createDB = async (html: string, id: string) => {
   const renovation: string = $('[data-name="flat.renovation"] .offer__advert-short-info').text().trim();
   const toilet: string = $('[data-name="flat.toilet"] .offer__advert-short-info').text().trim();
 
-  const aprt = new House({
+  const newHouse = new House({
     id: parseInt(id),
     price: price,
     city: city,
@@ -29,32 +25,6 @@ const createDB = async (html: string, id: string) => {
     renovation: renovation,
     toilet: toilet,
   });
-  console.log(aprt);
-
-  await aprt.save();
+  console.log(newHouse);
+  await newHouse.save();
 };
-
-const getData = async (id: string) => {
-  const url = `https://krisha.kz/a/show/${id}`;
-  await axios
-    .get(url)
-    .then(async function (response) {
-      const html = response.data;
-      createDB(html, id);
-    })
-    .catch(function (error) {
-      console.log(error);
-    })
-    .finally(function () {});
-};
-
-const initDB = async () => {
-  try {
-    await mongoose.connect("mongodb+srv://anastasia:123456789mongo@cluster0.8tssfhh.mongodb.net/KrishaKZ?retryWrites=true&w=majority");
-    console.log("success");
-  } catch (error) {
-    console.log("error: " + error);
-  }
-};
-
-initDB().then(() => getData(id));
