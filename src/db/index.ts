@@ -1,8 +1,8 @@
 import mongoose from "mongoose";
-import { ConfigMod } from "../domains/config/index.js";
+import { Config } from "../domains/config/index.js";
 
 export const initDatabase = async () => {
-  const databaseUrl = ConfigMod.getDbUrl();
+  const databaseUrl = Config.mainMongoUrl;
   try {
     await mongoose.connect(databaseUrl);
     console.log("Connected to MongoDB");

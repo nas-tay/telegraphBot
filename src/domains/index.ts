@@ -1,9 +1,9 @@
 import { initDatabase } from "../db/index.js";
-import { createDatabase } from "../data/houses/index.js";
-import { ConfigMod } from "./config/index.js";
-import { getData } from "../data/index.js";
+import { HouseData } from "../data/krisha/index.js";
+import { KrishaHouse } from "./krisha/house/index.js";
 
 const id: string = "681426253";
-const html = await getData(ConfigMod.getKrishaUrl(), id);
 
-initDatabase().then(() => createDatabase(html, id));
+const house = await KrishaHouse.parseHouse(id);
+
+initDatabase().then(() => HouseData.saveHouse(house));
