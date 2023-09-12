@@ -15,19 +15,19 @@ const houseSchema = new Schema({
     },
     buildingType: {
         type: String,
-        required: true,
+        required: false,
     },
-    yearBult: {
+    yearBuilt: {
         type: Number,
-        required: true,
+        required: false,
     },
     floor: {
         type: Number,
-        required: true,
+        required: false,
     },
     floorMax: {
         type: Number,
-        required: true,
+        required: false,
     },
     liveSquare: {
         type: Number,
@@ -35,13 +35,13 @@ const houseSchema = new Schema({
     },
     renovation: {
         type: String,
-        required: true,
+        required: false,
     },
     toilet: {
         type: String,
-        required: true,
+        required: false,
     },
 });
-const House = model("House", houseSchema);
-export default House;
+const HouseModel = model("House", houseSchema);
+export default HouseModel;
 //# sourceMappingURL=index.js.map

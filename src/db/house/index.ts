@@ -6,7 +6,7 @@ interface IHouse {
   price: number;
   city: string;
   buildingType: string;
-  yearBult: number;
+  yearBuilt: number;
   floor: number;
   floorMax: number;
   liveSquare: number;
@@ -29,19 +29,19 @@ const houseSchema = new Schema<IHouse>({
   },
   buildingType: {
     type: String,
-    required: true,
+    required: false,
   },
-  yearBult: {
+  yearBuilt: {
     type: Number,
-    required: true,
+    required: false,
   },
   floor: {
     type: Number,
-    required: true,
+    required: false,
   },
   floorMax: {
     type: Number,
-    required: true,
+    required: false,
   },
   liveSquare: {
     type: Number,
@@ -49,13 +49,13 @@ const houseSchema = new Schema<IHouse>({
   },
   renovation: {
     type: String,
-    required: true,
+    required: false,
   },
   toilet: {
     type: String,
-    required: true,
+    required: false,
   },
 });
 
-const House = model<IHouse>("House", houseSchema);
-export default House;
+const HouseModel = model<IHouse>("House", houseSchema);
+export default HouseModel;

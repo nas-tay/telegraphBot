@@ -5,7 +5,7 @@ export type SaveHouseType = {
   price: number;
   city: string;
   buildingType: string;
-  yearBult: number;
+  yearBuilt: number;
   floor: number;
   floorMax: number;
   liveSquare: number;
@@ -14,7 +14,9 @@ export type SaveHouseType = {
 };
 
 export class HouseData {
-  public static async getHouse() {}
+  public static async getHouse(id: string) {
+    return await House.findOne({ id });
+  }
 
   public static async updateHouse() {}
 
@@ -24,7 +26,8 @@ export class HouseData {
       throw new Error("House already exists");
     }
     const newHouse = new House(house);
-    await newHouse.save();
+    const saved = await newHouse.save();
     console.log("House is saved to MongoDB");
+    return saved;
   }
 }
