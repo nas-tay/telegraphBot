@@ -9,9 +9,17 @@ const houseSchema = new Schema({
         type: Number,
         required: true,
     },
+    roomNumber: {
+        type: Number,
+        required: true,
+    },
     city: {
         type: String,
         required: true,
+    },
+    address: {
+        type: String,
+        required: false,
     },
     buildingType: {
         type: String,

@@ -4,7 +4,9 @@ const { Schema, model } = mongoose;
 interface IHouse {
   id: number;
   price: number;
+  roomNumber: number;
   city: string;
+  address: string;
   buildingType: string;
   yearBuilt: number;
   floor: number;
@@ -23,9 +25,17 @@ const houseSchema = new Schema<IHouse>({
     type: Number,
     required: true,
   },
+  roomNumber: {
+    type: Number,
+    required: true,
+  },
   city: {
     type: String,
     required: true,
+  },
+  address: {
+    type: String,
+    required: false,
   },
   buildingType: {
     type: String,

@@ -3,7 +3,9 @@ import House from "../../db/house/index.js";
 export type SaveHouseType = {
   id: number;
   price: number;
+  roomNumber: number;
   city: string;
+  address: string;
   buildingType: string;
   yearBuilt: number;
   floor: number;
