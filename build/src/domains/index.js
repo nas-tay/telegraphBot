@@ -1,12 +1,14 @@
-import { queue } from "./krisha/house/job.js";
-import { initDatabase } from "../db/index.js";
-import { HouseData } from "../data/house/index.js";
-import { KrishaHouse } from "./krisha/house/index.js";
-import { Telegraf } from "telegraf";
-import { Config } from "./config/index.js";
-import { Utils } from "../utils/index.js";
-const botToken = Config.bot;
-const bot = new Telegraf(botToken);
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const job_js_1 = require("./krisha/house/job.js");
+const db_1 = require("../db");
+const house_1 = require("../data/house");
+const house_2 = require("./krisha/house");
+const telegraf_1 = require("telegraf");
+const config_1 = require("./config");
+const utils_1 = require("../utils");
+const botToken = config_1.Config.bot;
+const bot = new telegraf_1.Telegraf(botToken);
 const createReplyMessage = (data) => {
     return `
 По данному id найдено объявление:
@@ -20,19 +22,19 @@ ${data.buildingType !== "" ? "Тип Дома: " + data.buildingType + "\n" : ""
 ${data.toilet !== "" ? "Санузел: " + data.toilet : ""}
 `;
 };
-initDatabase();
+(0, db_1.initDatabase)();
 bot.start((ctx) => {
     bot.telegram.sendMessage(ctx.chat.id, `Здравствуйте ${ctx.from.first_name}!`);
     bot.telegram.sendMessage(ctx.chat.id, "Введите id объявления");
 });
 bot.on("text", async (ctx) => {
     const id = ctx.message.text;
-    const data = await HouseData.getHouse(id);
+    const data = await house_1.HouseData.getHouse(id);
     let message = "";
     if (!data) {
-        const newHouse = await KrishaHouse.parseHouse(id);
+        const newHouse = await house_2.KrishaHouse.parseHouse(id);
         if (newHouse) {
-            const saved = await HouseData.saveHouse(newHouse);
+            const saved = await house_1.HouseData.saveHouse(newHouse);
             message = createReplyMessage(saved);
         }
         else {
@@ -42,15 +44,15 @@ bot.on("text", async (ctx) => {
     else {
         message = createReplyMessage(data);
     }
-    queue.add({
+    job_js_1.queue.add({
         id: ctx.chat.id,
         text: message,
     });
 });
-queue.process(async (job) => {
+job_js_1.queue.process(async (job) => {
     const user = job.data.id;
     const message = job.data.text;
-    await Utils.delay(10).then(() => {
+    await utils_1.Utils.delay(10).then(() => {
         bot.telegram.sendMessage(user, message);
     });
 });
