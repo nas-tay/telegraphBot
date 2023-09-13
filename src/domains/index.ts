@@ -1,10 +1,11 @@
 import { Job, DoneCallback } from "bull";
-import { QueueJobData, queue } from "./job.js";
+import { QueueJobData, queue } from "./krisha/house/job.js";
 import { initDatabase } from "../db/index.js";
 import { HouseData, SaveHouseType } from "../data/house/index.js";
 import { KrishaHouse } from "./krisha/house/index.js";
 import { Context, Telegraf, Markup } from "telegraf";
 import { Config } from "./config/index.js";
+import { Utils } from "../utils/index.js";
 
 const botToken = Config.bot;
 const bot: Telegraf<Context> = new Telegraf(botToken);
@@ -28,17 +29,15 @@ ${data.toilet !== "" ? "Санузел: " + data.toilet : ""}
 initDatabase();
 
 bot.start((ctx) => {
-  ctx.reply("Здравствуйте " + ctx.from.first_name + "!");
-  ctx.reply("Введите id объявления");
+  bot.telegram.sendMessage(ctx.chat.id, `Здравствуйте ${ctx.from.first_name}!`);
+  bot.telegram.sendMessage(ctx.chat.id, "Введите id объявления");
 });
 
 bot.on("text", async (ctx) => {
-  console.log(123);
   const id: string = ctx.message.text;
   const data = await HouseData.getHouse(id);
   let message: string = "";
   if (!data) {
-    message = "Ищем подходящее объявление";
     const newHouse: SaveHouseType | undefined = await KrishaHouse.parseHouse(id);
     if (newHouse) {
       const saved = await HouseData.saveHouse(newHouse);
@@ -58,7 +57,9 @@ bot.on("text", async (ctx) => {
 queue.process(async (job: Job<QueueJobData>) => {
   const user = job.data.id;
   const message = job.data.text;
-  await bot.telegram.sendMessage(user, message);
+  await Utils.delay(10).then(() => {
+    bot.telegram.sendMessage(user, message);
+  });
 });
 
 bot.launch();
