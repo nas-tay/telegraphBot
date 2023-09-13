@@ -34,16 +34,7 @@ bot.start((ctx) => {
 
 bot.on("text", async (ctx) => {
   console.log(123);
-  queue.add({
-    id: ctx.chat.id,
-    text: ctx.message.text,
-  });
-});
-
-queue.process(async (job: Job<QueueJobData>) => {
-  const user = job.data.id;
-  const id: string = job.data.text;
-
+  const id: string = ctx.message.text;
   const data = await HouseData.getHouse(id);
   let message: string = "";
   if (!data) {
@@ -58,7 +49,16 @@ queue.process(async (job: Job<QueueJobData>) => {
   } else {
     message = createReplyMessage(data);
   }
-  bot.telegram.sendMessage(user, message);
+  queue.add({
+    id: ctx.chat.id,
+    text: message,
+  });
+});
+
+queue.process(async (job: Job<QueueJobData>) => {
+  const user = job.data.id;
+  const message = job.data.text;
+  await bot.telegram.sendMessage(user, message);
 });
 
 bot.launch();

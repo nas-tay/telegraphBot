@@ -19,17 +19,6 @@ ${data.buildingType !== "" ? "Тип Дома: " + data.buildingType + "\n" : ""
 ${data.toilet !== "" ? "Санузел: " + data.toilet : ""}
 `;
 };
-// async function addOrUpdateJob(job: Job<QueueJobData>) {
-//   // Check if a job with the user's ID already exists
-//   const existingJob = await queue.getJob(job.id, job.text);
-//   if (existingJob) {
-//     // If the job exists, update its data
-//     await existingJob.update({ userId, message });
-//   } else {
-//     // If the job doesn't exist, add a new job with the user's data
-//     await myQueue.add({ userId, message }, { jobId: userId });
-//   }
-// }
 initDatabase();
 bot.start((ctx) => {
     ctx.reply("Здравствуйте " + ctx.from.first_name + "!");
@@ -37,16 +26,7 @@ bot.start((ctx) => {
 });
 bot.on("text", async (ctx) => {
     console.log(123);
-    queue.add({
-        id: ctx.chat.id,
-        text: ctx.message.text,
-    });
-});
-queue.process(async (job) => {
-    console.log(job);
-    console.log(queue);
-    const user = job.data.id;
-    const id = job.data.text;
+    const id = ctx.message.text;
     const data = await HouseData.getHouse(id);
     let message = "";
     if (!data) {
@@ -63,6 +43,14 @@ queue.process(async (job) => {
     else {
         message = createReplyMessage(data);
     }
+    queue.add({
+        id: ctx.chat.id,
+        text: message,
+    });
+});
+queue.process(async (job) => {
+    const user = job.data.id;
+    const message = job.data.text;
     bot.telegram.sendMessage(user, message);
 });
 bot.launch();
