@@ -1,9 +1,6 @@
+//искуственная зарержка js
 export class Utils {
-  public static delay(milliseconds: number): Promise<void> {
-    return new Promise<void>((resolve) => {
-      setTimeout(() => {
-        resolve();
-      }, milliseconds);
-    });
+  public static async sleep(milliseconds: number) {
+    await new Promise<void>((resolve) => setTimeout(resolve, milliseconds));
   }
 }

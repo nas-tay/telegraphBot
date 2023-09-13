@@ -35,18 +35,24 @@ bot.start((ctx) => {
 
 bot.on("text", async (ctx) => {
   const id: string = ctx.message.text;
-  const data = await HouseData.getHouse(id);
   let message: string = "";
-  if (!data) {
-    const newHouse: SaveHouseType | undefined = await KrishaHouse.parseHouse(id);
-    if (newHouse) {
-      const saved = await HouseData.saveHouse(newHouse);
-      message = createReplyMessage(saved);
-    } else {
-      message = "Объявление не найдено";
-    }
+  if (!/^\d+$/.test(id)) {
+    message = "id может состоять только из цифр";
+  } else if (id.length !== 9) {
+    message = "id может содержать только 9 символов";
   } else {
-    message = createReplyMessage(data);
+    const data = await HouseData.getHouse(id);
+    if (!data) {
+      const newHouse: SaveHouseType | undefined = await KrishaHouse.parseHouse(id);
+      if (newHouse) {
+        const saved = await HouseData.saveHouse(newHouse);
+        message = createReplyMessage(saved);
+      } else {
+        message = "Объявление не найдено";
+      }
+    } else {
+      message = createReplyMessage(data);
+    }
   }
   queue.add({
     id: ctx.chat.id,
@@ -54,12 +60,17 @@ bot.on("text", async (ctx) => {
   });
 });
 
-queue.process(async (job: Job<QueueJobData>) => {
-  const user = job.data.id;
-  const message = job.data.text;
-  await Utils.delay(10).then(() => {
-    bot.telegram.sendMessage(user, message);
-  });
+queue.process(async (job: Job<QueueJobData>, done) => {
+  const user: number = job.data.id;
+  const message: string = job.data.text;
+  try {
+    await bot.telegram.sendMessage(user, message);
+  } catch (error) {
+    console.log(error);
+  } finally {
+    await Utils.sleep(2000);
+    done();
+  }
 });
 
 bot.launch();
