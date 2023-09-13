@@ -1,11 +1,11 @@
 import { Job } from "bull";
-import { QueueJobData, queue } from "./krisha/house/job.js";
-import { initDatabase } from "../db";
-import { HouseData, SaveHouseType } from "../data/house";
-import { KrishaHouse } from "./krisha/house";
+import { QueueJobData, queue } from "./domains/krisha/house/job.js";
+import { initDatabase } from "./db/index.js";
+import { HouseData, SaveHouseType } from "./data/house/index.js";
+import { KrishaHouse } from "./domains/krisha/house/index.js";
 import { Context, Telegraf } from "telegraf";
-import { Config } from "./config";
-import { Utils } from "../utils";
+import { Config } from "./domains/config/index.js";
+import { Utils } from "./utils/index.js";
 
 const botToken = Config.bot;
 const bot: Telegraf<Context> = new Telegraf(botToken);
