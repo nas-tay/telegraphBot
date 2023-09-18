@@ -16,19 +16,22 @@ export type SaveHouseType = {
 };
 
 export class HouseData {
-  public static async getHouse(id: string) {
+  public static async getHouse(id: string): Promise<SaveHouseType | null> {
+    if (!House.findOne({ id })) {
+      return null;
+    }
     return await House.findOne({ id });
   }
 
   public static async updateHouse() {}
 
-  public static async saveHouse(house: SaveHouseType) {
+  public static async saveHouse(house: SaveHouseType): Promise<SaveHouseType | null> {
     const savedHouse = await House.findOne({ id: house.id });
     if (savedHouse) {
-      throw new Error("House already exists");
+      return null;
     }
     const newHouse = new House(house);
-    const saved = await newHouse.save();
+    const saved: SaveHouseType = await newHouse.save();
     console.log("House is saved to MongoDB");
     return saved;
   }

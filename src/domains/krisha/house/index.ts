@@ -1,5 +1,6 @@
 import axios from "axios";
 import * as cheerio from "cheerio";
+import { SaveHouseType } from "../../../data/house";
 
 export type ParsedKrishaHouse = {
   id: number;
@@ -17,7 +18,7 @@ export type ParsedKrishaHouse = {
 };
 
 export class KrishaHouse {
-  public static async parseHouse(id: string) {
+  public static async parseHouse(id: string): Promise<SaveHouseType | undefined> {
     const url = `https://m.krisha.kz/a/show/${id}`;
     try {
       const response = await axios.get(url);
@@ -33,7 +34,10 @@ export class KrishaHouse {
         buildingType: $('[data-name="flat.building"] .offer__advert-short-info').text().trim(),
         yearBuilt: $('[data-name="house.year"] .offer__advert-short-info').length > 0 ? parseInt($('[data-name="house.year"] .offer__advert-short-info').text().trim()) : 0,
         floor: $('[data-name="flat.floor"] .offer__advert-short-info').length > 0 ? parseInt($('[data-name="flat.floor"] .offer__advert-short-info').text().trim().split(" из ")[0]) : 0,
-        floorMax: $('[data-name="flat.floor"] .offer__advert-short-info').length > 0 ? parseInt($('[data-name="flat.floor"] .offer__advert-short-info').text().trim().split(" из ")[1]) : 0,
+        floorMax:
+          $('[data-name="flat.floor"] .offer__advert-short-info').length > 0 && $('[data-name="flat.floor"] .offer__advert-short-info').text().trim().split(" из ").length > 1
+            ? parseInt($('[data-name="flat.floor"] .offer__advert-short-info').text().trim().split(" из ")[1])
+            : 0,
         liveSquare: parseFloat(
           $('[data-name="live.square"] .offer__advert-short-info')
             .text()
